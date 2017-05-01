@@ -89,3 +89,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 reporter/daily.txt
+.Rproj.user
