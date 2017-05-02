@@ -97,9 +97,9 @@ cumpnl_pl <- ggplot(cumpnl_df, aes(x = Timestamp, y = Cum.Profit.Loss)) +
 
 # Plots Runup, Drawdown, and PnL the which_day trades
 trade_stats_df <- trades[as.Date(trades$Entry.DateTime) == trade_date,]
-day_delim <- (diff(trade_stats_df$Entry.DateTime) != 0)
-day_delim <- day_delim*index(day_delim) +.5
-day_delim <- sort(unique(day_delim))[-1]
+trade_delim <- (diff(trade_stats_df$Entry.DateTime) > 1)
+trade_delim <- trade_delim*index(trade_delim) +.5
+trade_delim <- sort(unique(trade_delim))[-1]
 trade_stats_df$Index <- factor(trade_stats_df$Index, levels = trade_stats_df$Index)
 trade_stats_pl <- ggplot(trade_stats_df) +
         geom_bar(aes(x = Index, y =Profit.Loss, fill = Profitable), stat = "identity") +
@@ -108,7 +108,7 @@ trade_stats_pl <- ggplot(trade_stats_df) +
         theme(legend.position="none", axis.title.x = element_blank(),
               axis.ticks.x = element_blank(), axis.text.x = element_blank()) +
         scale_y_continuous(minor_breaks = seq(-20 , 50, 2.5), breaks = seq(-20, 50, 5)) +
-        geom_vline(xintercept = day_delim) + geom_hline(yintercept = 0, color = "red")
+        geom_vline(xintercept = trade_delim) + geom_hline(yintercept = 0, color = "red")
 
 
 
