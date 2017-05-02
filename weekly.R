@@ -1,8 +1,14 @@
 library(ggplot2); library(reshape2); library(xts); library(scales)
 # WALLACE
-source("/users/nick/documents/daytrader/funs/fin.R")
-source("/users/nick/documents/daytrader/funs/multiplot.R")
-filename <- "/SierraChart/TradeActivityLogs/SIM_TradesList.txt"
+# source("/users/nick/documents/daytrader/funs/fin.R")
+# source("/users/nick/documents/daytrader/funs/multiplot.R")
+# filename <- "/SierraChart/TradeActivityLogs/SIM_TradesList.txt"
+
+# HUXLEY
+source("/users/ncoutrakon/daytrader/funs/fin.R")
+source("/users/ncoutrakon/daytrader/funs/multiplot.R")
+setwd("/users/ncoutrakon/daytrader/reporter")
+filename <- "/users/ncoutrakon/.wine/drive_c/SierraChart/TradeActivityLogs/SIM_TradesList.txt"
 
 options(stringsAsFactors = F)
 
