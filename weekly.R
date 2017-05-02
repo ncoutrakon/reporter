@@ -1,8 +1,12 @@
 library(ggplot2); library(reshape2); library(xts); library(scales)
-source("/users/nick/documents/daytrader/funs.R")
+# WALLACE
+source("/users/nick/documents/daytrader/funs/fin.R")
+source("/users/nick/documents/daytrader/funs/multiplot.R")
+filename <- "/SierraChart/TradeActivityLogs/SIM_TradesList.txt"
+
 options(stringsAsFactors = F)
 
-filename <- "/SierraChart/TradeActivityLogs/SIM_TradesList.txt"
+
 
 to_daily_cum <- function(x){
         t_date <- as.Date(index(x[1]))
@@ -12,7 +16,7 @@ to_daily_cum <- function(x){
         x <- rbind.xts(tmp, x)
         x <- xts(cumsum(x[, 'Profit.Loss']), index(x) + (Sys.Date() - t_date))
         x <- fill_in(x)
-        
+
         names(x) <- as.character(t_date)
         return(x)
 }
@@ -59,7 +63,7 @@ trades_cum <- data.frame(Timestamp = index(trades_cum), trades_cum)
 names(trades_cum) <- c("Timestamp", substr(names(trades_cum)[-1], 2, nchar(names(trades_cum)[-1])))
 trades_cum <- melt(trades_cum, id.vars = "Timestamp")
 names(trades_cum) <- c("Timestamp", "Date", "Ticks")
-cum_pl <- ggplot(trades_cum) + geom_line(aes(x = Timestamp, y = Ticks, color = Date)) + 
+cum_pl <- ggplot(trades_cum) + geom_line(aes(x = Timestamp, y = Ticks, color = Date)) +
         scale_x_datetime(breaks = date_breaks("1 hour"), labels = date_format("%Hh", tz = "America/Chicago")) +
         xlab("") + scale_y_continuous(breaks = seq(-100, 100, 10)) + geom_hline(yintercept = 0, color = "red") +
         ggtitle(pl_title) + theme(legend.position = c(.1, .9), plot.title = element_text(size = 10)) +
@@ -79,7 +83,7 @@ stats_pl <- ggplot(trades) +
         geom_bar(aes(x = Index, y = Runup, fill = Profitable), width = .1, stat = "identity") +
         theme(legend.position="none", axis.title.x = element_blank(),
               axis.ticks.x = element_blank(), axis.text.x = element_blank()) +
-        scale_y_continuous(minor_breaks = seq(-100 , 100, 2.5), breaks = seq(-20, 50, 5)) + 
+        scale_y_continuous(minor_breaks = seq(-100 , 100, 2.5), breaks = seq(-20, 50, 5)) +
          geom_hline(yintercept = 0) + geom_vline(xintercept = day_delim) + ylab("")
 
 
@@ -88,7 +92,7 @@ stats_pl <- ggplot(trades) +
 
 
 ############################ OUTPUT ##########################################
-out_name <- paste0("reports/", last_week_date, "_W.pdf") 
+out_name <- paste0("reports/", last_week_date, "_W.pdf")
 pdf(out_name, width = 8.5, height = 11)
 multiplot(cum_pl, stats_pl, cols = 1)
 dev.off()
