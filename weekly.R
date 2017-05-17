@@ -49,7 +49,7 @@ trades <- trades[order(trades$Exit.DateTime),]
 # Convert Total.Efficiency columns to decimals
 trades[, 11] <- as.numeric(substr(trades[, 13], 1, nchar(trades[, 13])-1))/100
 trades$Profitable <- (trades$Profit.Loss > 0)
-trades$Index <- factor(row.names(trades))
+trades$Index <- factor(row.names(trades), levels = row.names(trades))
 last_date <- as.Date(trades[dim(trades)[1], 'Exit.DateTime'])
 last_week_date <- last_date - as.numeric(format(last_date, "%w"))
 trades <- trades[as.Date(trades$Exit.DateTime) > last_week_date, ]
@@ -58,7 +58,7 @@ trades <- trades[as.Date(trades$Exit.DateTime) > last_week_date, ]
 
 ######################## PLOTS ###############################
 # Overlapped Daily CumPnL
-daily_stat <- get_stats(trades)[1, 2:8]
+daily_stat <- get_stats(trades)[1, c(2:4, 7:8)]
 pl_title <- paste(names(daily_stat), daily_stat, sep = ': ',collapse = "   ")
 
 trades_cum <- as.xts(trades[, c(4:7, 9:13)], order.by = trades$Exit.DateTime)
