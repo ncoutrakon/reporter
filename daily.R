@@ -32,7 +32,7 @@ trades[, 11] <- as.numeric(substr(trades[, 11], 1, nchar(trades[, 11])-1))/100
 trades[, 3] <- as.POSIXct(trades[, 3])
 trades[, 8] <- as.POSIXct(trades[, 8])
 trades$Time.Length <- as.numeric(trades$Exit.DateTime - trades$Entry.DateTime)
-trades <- trades[order(trades$Exit.DateTime),]
+trades <- trades[order(trades$Entry.DateTime),]
 last_date <- as.Date(trades[dim(trades)[1], 'Exit.DateTime'])
 last_week_date <- last_date - as.numeric(format(last_date, "%w")) - 7
 trades <- trades[as.Date(trades$Exit.DateTime) > last_week_date, ]
@@ -65,9 +65,9 @@ cumpnl_df$Exit <- c(0, (diff(cumpnl_df$Cum.Profit.Loss) != 0)*1)
 # Plots daily PnL histogram and title with  which_day EOD stats
 daily_stat <- day_stats[dim(day_stats)[1], c(2:4, 7:8)]
 daily_pl_title <- paste(names(daily_stat), daily_stat, sep = ': ',collapse = "   ")
-day_pnl_pl <- ggplot(day_stats) + geom_bar(aes(x = Date, y = Total.PnL), stat = "identity")  +
-        scale_y_continuous(minor_breaks = seq(-500, 500, 5), breaks = seq(-500, 500, 10)) +
-        theme(axis.title.x = element_blank(), plot.title = element_text(size = 10)) +  ggtitle(daily_pl_title) +
+day_pnl_pl <- ggplot(day_stats) + geom_bar(aes(x = Date, y = Total.PnL, fill = Profitable), stat = "identity")  +
+        scale_y_continuous(minor_breaks = seq(-500, 500, 10), breaks = seq(-500, 500, 20)) +
+        theme(axis.title.x = element_blank(), legend.position="none", plot.title = element_text(size = 10)) +  ggtitle(daily_pl_title) +
         geom_hline(yintercept = 0, color = "red") +
         scale_x_date(date_breaks = "1 day", date_minor_breaks = "1 day", date_labels = "%m-%d") +
         geom_line(aes(x = Date, y = Cum.P.L))
@@ -90,12 +90,16 @@ day_stats_pl <- ggplot(day_stats) +
 
 cumpnl_pl <- ggplot(cumpnl_df, aes(x = Timestamp, y = Cum.Profit.Loss)) +
         geom_line() + xlab(names(per_day)[which_day]) +
-        scale_y_continuous(minor_breaks = seq(-200, 500, 5), breaks = seq(-200, 500, 10)) +
+        scale_y_continuous(minor_breaks = seq(-200, 500, 10), breaks = seq(-200, 500, 20)) +
         geom_hline(yintercept = 0, color = "red") +
         geom_label(data = cumpnl_df[cumpnl_df$Exit !=0, ],
-                   aes(x = Timestamp, y = Cum.Profit.Loss, label = format(Timestamp, "%M:%S")),
+                    aes(x = Timestamp, y = Cum.Profit.Loss, label = format(Timestamp, "%M:%S")),
                    fill = "sky blue", color = "white", size = 1.5, label.size = .5) + expand_limits(y=-10) + expand_limits(y=10) +
         scale_x_datetime(breaks = date_breaks("1 hour"), labels = date_format("%Hh", tz = "America/Chicago"))
+        # geom_label(data = cumpnl_df[cumpnl_df$Exit !=0, ],
+        #              aes(x = Timestamp, y = Cum.Profit.Loss, label = "", fill = "sky blue", color = "white",
+        #                  size = 1.5, label.size = .5)) + expand_limits(y=-10) + expand_limits(y=10) +
+        # geom_text(data = cumpnl_df[cumpnl_df$Exit !=0, ], aes(x = Timestamp, y = Cum.Profit.Loss, label = format(Timestamp, "%M:%S")))
 
 
 

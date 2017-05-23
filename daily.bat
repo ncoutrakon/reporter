@@ -1,0 +1,1 @@
+Rscript --vanilla /Users/Nick/Documents/daytrader/reporter/daily.R
